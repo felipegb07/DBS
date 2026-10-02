@@ -23,4 +23,44 @@ Al momento que hacemos la creación de la base de datos, debemos tener en cuenta
 | --- | --- |
 | `psql -u usuario -d nombreBaseDeDatos` | `\c nombreBaseDeDatos` |
 
-Con esto en mente, podemos generar el acceso a nuestra base de datos mediante comandos.  
+Con esto en mente, podemos generar el acceso a nuestra base de datos mediante comandos. 
+
+## Consultas en la base de datos mediante el entorno gráfico
+Al momento que queramos hacer cosultas mediante pgAdmin, debemos tenen en cuenta que entraremos a la base de datos, mediante una terminal de comando y hacer la ejecución de ciertos pasos especificos para así poder realizar ciertas consultas las cuales nos permitirán ver cómo está la base de datos por dentro.
+
+
+## Tablas base de datos
+### Tabla general
+| Schema |    Name    | Type  |  Owner |
+| ------ | ---------- |------ | -------- |
+| public | advisor    | table | postgres |
+| public | classroom  | table | postgres |
+| public | course     | table | postgres |
+| public | department | table | postgres |
+| public | instructor | table | postgres |
+| public | prereq     | table | postgres |
+| public | section    | table | postgres |
+| public | student    | table | postgres |
+| public | takes      | table | postgres |
+| public | teaches    | table | postgres |
+| public | time slot  | table | postgres |
+ 
+### Estructuras bases de datos
+- advisor(s id, i id)
+- classroom(building, room number, capacity)
+- course(course id, title, dept name, credits)
+- department(dept name, buiding, budget)
+- instructor(id, name, dept name, salary)
+- prereq(course id, prereq id)
+- section(course id, sec id, semester, year, building, room number, time slot id)
+- student(id, name, dept name, tot cred)
+- takes(id, course id, sec id, semester, year, grade)
+- teaches(id, course id, sec id, semester, year)
+- time Slot(time slot id, day, start hr, start min, end hr, end min)
+
+## Consultas
+1. Retorne todos los nombres de los instructures, con sus nombres departamentos y el nombre del edificio del departamento.
+
+```SQL
+
+```
