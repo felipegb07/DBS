@@ -1,0 +1,152 @@
+--1. What is Magneto’s full name?
+
+SELECT
+    hero.full_name
+FROM superhero.superhero hero
+JOIN superhero.gender gender
+    ON hero.gender_id = gender.id
+WHERE hero.superhero_name = 'Magneto';
+
+--2. Retrieve each superhero’s name along with the publisher’s name.
+
+SELECT
+    hero.superhero_name,
+    publisher.publisher_name
+FROM superhero.superhero hero
+JOIN superhero.publisher publisher
+    ON hero.publisher_id = publisher.id;
+
+--3.  Display the name, full name, and gender of supervillains. We define a supervillain as a superhero with a
+“Bad” alignment.
+
+SELECT
+    hero.superhero_name,
+    hero.full_name,
+    gender.gender
+FROM superhero.superhero hero
+JOIN superhero.alignment alignment
+    ON hero.alignment_id = alignment.id
+JOIN superhero.gender gender
+    ON hero.gender_id = gender.id
+WHERE alignment.alignment = 'Bad';
+
+--4. Based on gender, which group has more superpowers? Show the total for each category.
+
+SELECT
+    gender.gender,
+    COUNT(hero_power.power_id) AS total_superpowers
+FROM superhero.superhero hero
+JOIN superhero.gender gender
+    ON hero.gender_id = gender.id
+JOIN superhero.hero_power hero_power
+    ON hero.id = hero_power.hero_id
+GROUP BY gender.gender;
+
+--5.  List the superheroes who are the most diverse, meaning those who have different eye, hair, and skin colors. Display all colors along with the superhero’s name.
+
+SELECT
+    hero.superhero_name,
+    eye.colour AS eye_colour,
+    hair.colour AS hair_colour,
+    skin.colour AS skin_colour
+FROM superhero.superhero hero
+JOIN superhero.colour eye
+    ON hero.eye_colour_id = eye.id
+JOIN superhero.colour hair
+    ON hero.hair_colour_id = hair.id
+JOIN superhero.colour skin
+    ON hero.skin_colour_id = skin.id
+WHERE hero.eye_colour_id <> hero.hair_colour_id
+  AND hero.eye_colour_id <> hero.skin_colour_id
+  AND hero.hair_colour_id <> hero.skin_colour_id;
+
+--6.  Display the list of superheroes who do not have any attributes at all. Hint: Use a LEFT JOIN and look for null values.
+
+SELECT hero.superhero_name
+FROM superhero.superhero hero
+LEFT JOIN superhero.hero_attribute hero_attribute
+    ON hero.id = hero_attribute.hero_id
+WHERE hero_attribute.hero_id IS NULL;
+
+--7. True or False: Does ‘Marvel Comics’ have more “Good” superheroes than ‘DC Comics’?
+
+SELECT
+    (SELECT COUNT(*)
+     FROM superhero.superhero hero
+     JOIN superhero.publisher publisher
+         ON hero.publisher_id = publisher.id
+     JOIN superhero.alignment alignment
+         ON hero.alignment_id = alignment.id
+     WHERE publisher.publisher_name = 'Marvel Comics'
+       AND alignment.alignment = 'Good')
+    >
+    (SELECT COUNT(*)
+     FROM superhero.superhero hero
+     JOIN superhero.publisher publisher
+         ON hero.publisher_id = publisher.id
+     JOIN superhero.alignment alignment
+         ON hero.alignment_id = alignment.id
+     WHERE publisher.publisher_name = 'DC Comics'
+       AND alignment.alignment = 'Good');
+
+--8.  What is the average height and maximum weight of characters published by ‘Dark Horse Comics’? Do not take into account any null or 0 values in the calculation.
+
+SELECT
+    AVG(hero.height_cm) AS average_height,
+    MAX(hero.weight_kg) AS maximum_weight
+FROM superhero.superhero hero
+JOIN superhero.publisher publisher
+    ON hero.publisher_id = publisher.id
+WHERE publisher.publisher_name = 'Dark Horse Comics'
+  AND hero.height_cm IS NOT NULL
+  AND hero.height_cm <> 0
+  AND hero.weight_kg IS NOT NULL
+  AND hero.weight_kg <> 0;
+
+--9.  Who is stronger: Superman or Goku? We will measure strength using the following formula: strength = count of attributes + 2 × count of powers
+
+SELECT
+    hero.superhero_name,
+    COUNT(DISTINCT hero_attribute.attribute_id)
+        + 2 * COUNT(DISTINCT hero_power.power_id) AS strength
+FROM superhero.superhero hero
+LEFT JOIN superhero.hero_attribute hero_attribute
+    ON hero.id = hero_attribute.hero_id
+LEFT JOIN superhero.hero_power hero_power
+    ON hero.id = hero_power.hero_id
+WHERE hero.superhero_name IN ('Superman', 'Goku')
+GROUP BY hero.id, hero.superhero_name;
+
+--10. Shows all of the superheroes and the sum of their attributes, including those with no attributes.
+
+SELECT
+    hero.superhero_name,
+    COUNT(hero_attribute.attribute_id) AS total_attributes
+FROM superhero.superhero hero
+LEFT JOIN superhero.hero_attribute hero_attribute
+    ON hero.id = hero_attribute.hero_id
+GROUP BY hero.id, hero.superhero_name;
+
+-- (Extra query) 11. ¿cuales superheroes tienen el super poder de volar y pertenecen a marvel comics?
+
+SELECT hero.superhero_name
+FROM superhero.superhero hero
+JOIN superhero.hero_power hero_power
+    ON hero.id = hero_power.hero_id
+JOIN superhero.superpower power
+    ON hero_power.power_id = power.id
+JOIN superhero.publisher publisher
+    ON hero.publisher_id = publisher.id
+WHERE power.power_name = 'Flight'
+  AND publisher.publisher_name = 'Marvel Comics';
+
+--(Extra Query) 12. ¿Cuales "publishers"tienen mas de 10 superheroes?
+
+SELECT
+    publisher.publisher_name,
+    COUNT(hero.id) AS total_superheroes
+FROM superhero.superhero hero
+JOIN superhero.publisher publisher
+    ON hero.publisher_id = publisher.id
+GROUP BY publisher.id, publisher.publisher_name
+HAVING COUNT(hero.id) > 10;
