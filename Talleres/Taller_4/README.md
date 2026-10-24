@@ -126,4 +126,28 @@ create table nombre (
 );
 ```
 
+**Incluir teniendo en cuenta los constraints**
+```SQL
+alter table nombe
+add constraint nombre_restrcción primary key (atr1);
+```
+##### Foreing key
+Se hace la creación de las tablas teniendo en cuenta las referencias hacia las otras tablas.
 
+```SQL
+create table nombre (
+    atr1 type constraint,
+    atr2 type constraint,
+    constraint nombre foreign key (atr1) references (tabla1, tabla2)
+);
+```
+
+##### Check
+Funciona de tal manera que podamos hacer un predicado para hacer el filtro teniendo en cuenta una restricción.
+
+```SQL
+create table nombre (
+    atr1 type const,
+    atr2 type const,
+    constraint nombre 
+);
